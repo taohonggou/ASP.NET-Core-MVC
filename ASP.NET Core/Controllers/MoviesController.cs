@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ASP.NETCore.Models;
+using MvcMovie.Models;
 
 namespace ASP.NET_Core.Controllers
 {
@@ -15,18 +16,49 @@ namespace ASP.NET_Core.Controllers
 
         public MoviesController(MovieContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         // GET: Movies
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string  movieGenre, string searchString)
         {
-            return View(await _context.Movie.ToListAsync());
+            var genreQuery = from g in _context.Movie
+                             orderby g.Genre
+                             select g.Genre;
+
+
+            var movies = from m in _context.Movie
+                         select m;
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                movies = movies.Where(o => o.Title.Contains(searchString));
+            }
+            if(!string.IsNullOrEmpty(movieGenre))
+            {
+                movies = movies.Where(o => o.Genre == movieGenre);
+            }
+
+            var list = await movies.ToListAsync();
+            if (list.Count == 0)
+            { return NotFound(); }
+
+            var movieGenreVM = new MovieGenreViewModel
+            {
+                genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
+                movies = list
+            };
+            return View(movieGenreVM);
+        }
+
+        [HttpPost]
+        public string Index(string searchString , bool notUsed)
+        {
+            return "From [HttpPost]index:filter on "+searchString;
         }
 
         // GET: Movies/Details/5
         public async Task<IActionResult> Details(int? id)
-        { 
+        {
             if (id == null)
             {
                 return NotFound();
