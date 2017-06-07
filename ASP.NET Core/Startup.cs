@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using ASP.NETCore.Models;
+using MvcMovie.Models;
 
 namespace ASP.NETCore
 {
@@ -60,6 +61,8 @@ namespace ASP.NETCore
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            SeedData.Initialize(app.ApplicationServices);
         }
     }
 }
