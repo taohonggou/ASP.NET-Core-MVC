@@ -31,6 +31,10 @@ namespace ASP.NETCore
 
             services.AddDbContext<MovieContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("MovieContext")));
+
+            //services.Configure<IISOptions>(options => {
+
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,7 +59,7 @@ namespace ASP.NETCore
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Movies}/{action=Index}/{id?}");
+                    template: "{controller=Moives}/{action=Index}/{id?}");
             });
 
             SeedData.Initialize(app.ApplicationServices);
